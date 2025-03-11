@@ -60,12 +60,18 @@ jobs:
       - name: Initialize repo and sync
         run: |
          mkdir kernel_workspace && cd kernel_workspace
-         repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }}  --depth=1
-         if[${{ github.event.inputs.FILE }} == 'oneplus_pad_pro_v'];then 
-           mv oneplus_pad_2_v.xml oneplus_pad_pro_v.xml
-           sed -i 's/_pad2/_pad_pro/g' oneplus_pad_pro_v.xml
+         
+         if[${{ github.event.inputs.FILE }} == 'oneplus_pad_pro_v']
+         then 
+           repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }}  -m oneplus_pad2_v.xml --depth=1
+           cp ./.repo/.manifests/oneplus_pad_2_v.xml ./.repo/.manifests/oneplus_pad_pro_v.xml
+           sed -i 's/_pad2/_pad_pro/g' ./.repo/.manifests/oneplus_pad_pro_v.xml
+           sed -i 's/_pad2_v/_pad_pro_v/g' ./.repo/manifest.xml
+           repo init -m ${{ github.event.inputs.FILE }}.xml --depth=1
+         else
+           repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }}  -m ${{ github.event.inputs.FILE }}.xml --depth=1
          fi
-         repo init -m ${{ github.event.inputs.FILE }}.xml --depth=1
+         
          repo sync
          rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
          rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
