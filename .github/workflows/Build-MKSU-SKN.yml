@@ -6,10 +6,10 @@ on:
         description: "分支"
         required: true
         default: 'sm8650'
-      FEIL:
+      FILE:
         description: "配置文件"
         required: true
-        default: 'oneplus_ace3_pro_v'
+        default: 'oneplus_pad_pro_v'
       CPUD:
         description: "处理器代号"
         required: true
@@ -31,9 +31,9 @@ on:
         required: true
         type: choice
         options:
-          - Kernel
+          - Official
           - MKSU-SKN
-        default: MKSU-SKN
+        default: Kernel
       kernelsu_version:
         description: "选择 KSU 版本"
         required: true
@@ -47,7 +47,7 @@ on:
         description: "添加 SUSFS"
         required: true
         type: boolean
-        default: true
+        default: false
       VFS_patch_ENABLED:
         description: "添加vfs补丁（新钩子）？"
         required: true
@@ -55,7 +55,7 @@ on:
         options:
           - enable
           - disable
-        default: enable
+        default: disable
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -73,8 +73,8 @@ jobs:
 
       - name: Configure Git
         run: |
-         git config --global user.name "ychenxuan"
-         git config --global user.email "3494167979@qq.com"
+         git config --global user.name "hopeeia"
+         git config --global user.email "2827754076zls@gmail.com"
 
       - name: Install dependencies
         run: |
@@ -90,7 +90,11 @@ jobs:
       - name: Initialize repo and sync
         run: |
          mkdir kernel_workspace && cd kernel_workspace
-         repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }} -m ${{ github.event.inputs.FEIL }}.xml --depth=1
+         repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }}  --depth=1
+         if[${{ github.event.inputs.FILE }} == 'oneplus_pad_pro_v'];then 
+           mv oneplus_pad_2_v.xml oneplus_pad_pro_v.xml
+           
+         repo init -m ${{ github.event.inputs.FILE }}.xml --depth=1
          repo sync
          rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
          rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
