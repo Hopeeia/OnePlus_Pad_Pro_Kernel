@@ -61,8 +61,9 @@ jobs:
         run: |
          mkdir kernel_workspace && cd kernel_workspace
          
-         if[${{ github.event.inputs.FILE }} == 'oneplus_pad_pro_v']
-         then 
+         if${{ github.event.inputs.FILE }} == 'oneplus_pad_pro_v' 
+         then
+         
            repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }}  -m oneplus_pad2_v.xml --depth=1
            cp ./.repo/.manifests/oneplus_pad_2_v.xml ./.repo/.manifests/oneplus_pad_pro_v.xml
            sed -i 's/_pad2/_pad_pro/g' ./.repo/.manifests/oneplus_pad_pro_v.xml
